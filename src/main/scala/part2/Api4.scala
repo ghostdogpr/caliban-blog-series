@@ -8,13 +8,10 @@ object Api4 {
   type MyQuery[+A] = ZQuery[Any, Nothing, A]
 
   case class QueryArgs(count: Int)
-
   case class Query(orders: QueryArgs => MyQuery[List[OrderView]])
 
   case class OrderView(id: OrderId, customer: MyQuery[Customer], products: List[ProductOrderView])
-
   case class ProductOrderView(id: ProductId, details: MyQuery[ProductDetailsView], quantity: Int)
-
   case class ProductDetailsView(name: String, description: String, brand: MyQuery[Brand])
 
   def resolver(dbService: DBService): Query = {
