@@ -13,14 +13,18 @@ import zio.{ Task, ZIO }
 object HttpApp extends CatsApp {
 
   override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
-    BlazeServerBuilder[Task]
-      .bindHttp(8088, "localhost")
-      .withHttpApp(
-        Router[Task]("/api/graphql" -> CORS(Http4sAdapter.makeHttpService(MyApi.interpreter))).orNotFound
+    MyApi.interpreter
+      .flatMap(
+        interpreter =>
+          BlazeServerBuilder[Task]
+            .bindHttp(8088, "localhost")
+            .withHttpApp(
+              Router[Task]("/api/graphql" -> CORS(Http4sAdapter.makeHttpService(interpreter))).orNotFound
+            )
+            .resource
+            .toManaged
+            .useForever
       )
-      .resource
-      .toManaged
-      .useForever
       .catchAll(err => putStrLn(err.toString))
       .as(1)
 }
