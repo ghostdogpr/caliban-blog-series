@@ -2,9 +2,9 @@ package client
 
 import client.TrainClient._
 import sttp.client._
-import sttp.client.asynchttpclient.zio.AsyncHttpClientZioBackend
+import sttp.client.asynchttpclient.zio.{ AsyncHttpClientZioBackend, SttpClient }
 import zio.console.putStrLn
-import zio.{ App, Task, ZIO }
+import zio.{ App, ZIO }
 
 object TrainApp extends App {
 
@@ -35,12 +35,14 @@ object TrainApp extends App {
         }
       }
 
-    AsyncHttpClientZioBackend().flatMap { implicit backend =>
-      val uri = uri"https://bahnql.herokuapp.com/graphql"
-      val task: Task[List[((String, Boolean), (List[Train], List[Train]))]] =
-        query.toRequest(uri).send().map(_.body).absolve
+    val uri = uri"https://bahnql.herokuapp.com/graphql"
 
-      task.tap(res => putStrLn(s"Result: $res"))
-    }.foldM(ex => putStrLn(ex.toString).as(1), _ => ZIO.succeed(0))
+    SttpClient
+      .send(query.toRequest(uri))
+      .map(_.body)
+      .absolve
+      .tap(res => putStrLn(s"Result: $res"))
+      .provideCustomLayer(AsyncHttpClientZioBackend.layer())
+      .foldM(ex => putStrLn(ex.toString).as(1), _ => ZIO.succeed(0))
   }
 }
