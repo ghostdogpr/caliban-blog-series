@@ -8,6 +8,7 @@ libraryDependencies ++= Seq(
   "com.github.ghostdogpr"        %% "caliban"                       % "0.8.1",
   "com.github.ghostdogpr"        %% "caliban-http4s"                % "0.8.1",
   "com.github.ghostdogpr"        %% "caliban-client"                % "0.8.1",
+  "dev.zio"                      %% "zio-query"                     % "0.2.2",
   "com.softwaremill.sttp.client" %% "async-http-client-backend-zio" % "2.1.5"
 )
 
