@@ -1,7 +1,7 @@
 package part2
 
 import part2.Data._
-import zquery.{ DataSource, Request, ZQuery }
+import zio.query.{ DataSource, Request, ZQuery }
 
 object Api3 {
 

@@ -4,7 +4,7 @@ import caliban.CalibanError.ValidationError
 import caliban.GraphQL.graphQL
 import caliban.RootResolver
 import zio.console.{ putStrLn, Console }
-import zio.{ App, ZIO }
+import zio.{ App, ExitCode, ZIO }
 
 object TestApp extends App {
 
@@ -52,6 +52,7 @@ object TestApp extends App {
       _           <- putStrLn(s"ZQuery with Batch - DB Hits: $dbHits")
     } yield 0
 
-  override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
-    (test1 *> test2 *> test3 *> test4 as 0).catchAll(error => zio.console.putStrLn(error.toString).as(1))
+  override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, ExitCode] =
+    (test1 *> test2 *> test3 *> test4 as ExitCode.success)
+      .catchAll(error => zio.console.putStrLn(error.toString).as(ExitCode.failure))
 }

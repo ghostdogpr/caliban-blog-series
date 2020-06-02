@@ -8,11 +8,11 @@ import org.http4s.server.middleware.CORS
 import zio.console.putStrLn
 import zio.interop.catz._
 import zio.interop.catz.implicits._
-import zio.{ Task, ZIO }
+import zio.{ ExitCode, Task, ZIO }
 
 object HttpApp extends CatsApp {
 
-  override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
+  override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, ExitCode] =
     MyApi.interpreter
       .flatMap(
         interpreter =>
@@ -26,5 +26,5 @@ object HttpApp extends CatsApp {
             .useForever
       )
       .catchAll(err => putStrLn(err.toString))
-      .as(1)
+      .as(ExitCode.success)
 }
