@@ -1,8 +1,8 @@
 package client
 
 import client.TrainClient._
-import sttp.client._
-import sttp.client.asynchttpclient.zio.{ AsyncHttpClientZioBackend, SttpClient }
+import sttp.client3._
+import sttp.client3.asynchttpclient.zio.{ send, AsyncHttpClientZioBackend }
 import zio.console.putStrLn
 import zio.{ App, ExitCode, ZIO }
 
@@ -35,14 +35,13 @@ object TrainApp extends App {
         }
       }
 
-    val uri = uri"https://bahnql.herokuapp.com/graphql"
+    val uri = uri"https://api.deutschebahn.com/free1bahnql/v1/graphql"
 
-    SttpClient
-      .send(query.toRequest(uri))
+    send(query.toRequest(uri))
       .map(_.body)
       .absolve
-      .tap(res => putStrLn(s"Result: $res"))
+      .tap(res => ZIO.debug(s"Result: $res"))
       .provideCustomLayer(AsyncHttpClientZioBackend.layer())
-      .foldM(ex => putStrLn(ex.toString).as(ExitCode.failure), _ => ZIO.succeed(ExitCode.success))
+      .exitCode
   }
 }

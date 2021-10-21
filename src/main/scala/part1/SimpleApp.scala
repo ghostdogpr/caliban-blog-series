@@ -17,5 +17,5 @@ object SimpleApp extends CatsApp {
                                       |}
                                       |""".stripMargin)
       _           <- zio.console.putStrLn(result.data.toString)
-    } yield ExitCode.success).catchAll(error => zio.console.putStrLn(error.toString).as(ExitCode.failure))
+    } yield ExitCode.success).exitCode
 }
