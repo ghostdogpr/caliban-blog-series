@@ -19,28 +19,28 @@ object Api4 {
 
     case class GetCustomer(id: CustomerId) extends Request[Nothing, Customer]
     val CustomerDataSource: DataSource[Any, GetCustomer] =
-      DataSource.fromFunctionBatchedM("CustomerDataSource")(
+      DataSource.fromFunctionBatchedZIO("CustomerDataSource")(
         requests => dbService.getCustomers(requests.map(_.id).toList).map(Chunk.fromIterable)
       )
     def getCustomer(id: CustomerId): MyQuery[Customer] = ZQuery.fromRequest(GetCustomer(id))(CustomerDataSource)
 
     case class GetProduct(id: ProductId) extends Request[Nothing, Product]
     val ProductDataSource: DataSource[Any, GetProduct] =
-      DataSource.fromFunctionBatchedM("ProductDataSource")(
+      DataSource.fromFunctionBatchedZIO("ProductDataSource")(
         requests => dbService.getProducts(requests.map(_.id).toList).map(Chunk.fromIterable)
       )
     def getProduct(id: ProductId): MyQuery[Product] = ZQuery.fromRequest(GetProduct(id))(ProductDataSource)
 
     case class GetBrand(id: BrandId) extends Request[Nothing, Brand]
     val BrandDataSource: DataSource[Any, GetBrand] =
-      DataSource.fromFunctionBatchedM("BrandDataSource")(
+      DataSource.fromFunctionBatchedZIO("BrandDataSource")(
         requests => dbService.getBrands(requests.map(_.id).toList).map(Chunk.fromIterable)
       )
     def getBrand(id: BrandId): MyQuery[Brand] = ZQuery.fromRequest(GetBrand(id))(BrandDataSource)
 
     def getOrders(count: Int): MyQuery[List[OrderView]] =
       ZQuery
-        .fromEffect(dbService.getLastOrders(count))
+        .fromZIO(dbService.getLastOrders(count))
         .map(_.map(order => OrderView(order.id, getCustomer(order.customerId), getProducts(order.products))))
 
     def getProducts(products: List[(ProductId, Int)]): List[ProductOrderView] =

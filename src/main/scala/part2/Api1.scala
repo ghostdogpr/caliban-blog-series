@@ -1,7 +1,7 @@
 package part2
 
 import part2.Data._
-import zio.UIO
+import zio.{ UIO, ZIO }
 
 object Api1 {
 
@@ -18,7 +18,7 @@ object Api1 {
       dbService
         .getLastOrders(count)
         .flatMap(
-          UIO.foreach(_)(
+          ZIO.foreach(_)(
             order =>
               for {
                 customer <- dbService.getCustomer(order.customerId)
@@ -28,7 +28,7 @@ object Api1 {
         )
 
     def getProducts(products: List[(ProductId, Int)]): UIO[List[ProductOrderView]] =
-      UIO.foreach(products) {
+      ZIO.foreach(products) {
         case (productId, quantity) =>
           dbService
             .getProduct(productId)

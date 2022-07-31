@@ -2,7 +2,7 @@ package part1
 
 import java.net.URL
 import part1.Data.{ Color, Pug, PugNotFound }
-import zio.{ IO, UIO }
+import zio.{ IO, UIO, ZIO }
 
 trait PugService {
   def findPug(name: String): IO[PugNotFound, Pug]                          // GET request
@@ -14,7 +14,7 @@ trait PugService {
 object PugService {
   val dummy: PugService = new PugService {
     override def findPug(name: String): IO[PugNotFound, Pug] =
-      IO.succeed(
+      ZIO.succeed(
         Pug(
           "Patrick",
           List("Pat"),
@@ -23,8 +23,8 @@ object PugService {
         )
       )
     override def randomPugPicture: UIO[String] =
-      UIO.succeed("https://m.media-amazon.com/images/I/81tRAIFb9OL._SS500_.jpg")
-    override def addPug(pug: Pug): UIO[Unit]                                          = UIO.unit
-    override def editPugPicture(name: String, pictureUrl: URL): IO[PugNotFound, Unit] = IO.fail(PugNotFound(name))
+      ZIO.succeed("https://m.media-amazon.com/images/I/81tRAIFb9OL._SS500_.jpg")
+    override def addPug(pug: Pug): UIO[Unit]                                          = ZIO.unit
+    override def editPugPicture(name: String, pictureUrl: URL): IO[PugNotFound, Unit] = ZIO.fail(PugNotFound(name))
   }
 }

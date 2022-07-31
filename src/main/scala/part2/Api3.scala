@@ -18,22 +18,22 @@ object Api3 {
 
     case class GetCustomer(id: CustomerId) extends Request[Nothing, Customer]
     val CustomerDataSource: DataSource[Any, GetCustomer] =
-      DataSource.fromFunctionM("CustomerDataSource")(req => dbService.getCustomer(req.id))
+      DataSource.fromFunctionZIO("CustomerDataSource")(req => dbService.getCustomer(req.id))
     def getCustomer(id: CustomerId): MyQuery[Customer] = ZQuery.fromRequest(GetCustomer(id))(CustomerDataSource)
 
     case class GetProduct(id: ProductId) extends Request[Nothing, Product]
     val ProductDataSource: DataSource[Any, GetProduct] =
-      DataSource.fromFunctionM("ProductDataSource")(req => dbService.getProduct(req.id))
+      DataSource.fromFunctionZIO("ProductDataSource")(req => dbService.getProduct(req.id))
     def getProduct(id: ProductId): MyQuery[Product] = ZQuery.fromRequest(GetProduct(id))(ProductDataSource)
 
     case class GetBrand(id: BrandId) extends Request[Nothing, Brand]
     val BrandDataSource: DataSource[Any, GetBrand] =
-      DataSource.fromFunctionM("BrandDataSource")(req => dbService.getBrand(req.id))
+      DataSource.fromFunctionZIO("BrandDataSource")(req => dbService.getBrand(req.id))
     def getBrand(id: BrandId): MyQuery[Brand] = ZQuery.fromRequest(GetBrand(id))(BrandDataSource)
 
     def getOrders(count: Int): MyQuery[List[OrderView]] =
       ZQuery
-        .fromEffect(dbService.getLastOrders(count))
+        .fromZIO(dbService.getLastOrders(count))
         .map(_.map(order => OrderView(order.id, getCustomer(order.customerId), getProducts(order.products))))
 
     def getProducts(products: List[(ProductId, Int)]): List[ProductOrderView] =

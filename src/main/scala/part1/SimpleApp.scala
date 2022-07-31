@@ -1,12 +1,13 @@
 package part1
 
-import zio.{ ExitCode, ZIO }
+import caliban.CalibanError.ValidationError
 import zio.interop.catz._
+import zio.{ IO, ZIO }
 
 object SimpleApp extends CatsApp {
 
-  override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, ExitCode] =
-    (for {
+  override def run: IO[ValidationError, Unit] =
+    for {
       interpreter <- MyApi.interpreter
       result      <- interpreter.execute("""
                                       |{
@@ -16,6 +17,6 @@ object SimpleApp extends CatsApp {
                                       |  }
                                       |}
                                       |""".stripMargin)
-      _           <- zio.console.putStrLn(result.data.toString)
-    } yield ExitCode.success).exitCode
+      _           <- ZIO.debug(result.data.toString)
+    } yield ()
 }
