@@ -1,7 +1,9 @@
 package part2
 
 import caliban.CalibanError.ValidationError
-import caliban.GraphQL.graphQL
+import caliban._
+import caliban.schema.ArgBuilder.auto._
+import caliban.schema.Schema.auto._
 import caliban.RootResolver
 import zio.{ IO, ZIO, ZIOAppDefault }
 

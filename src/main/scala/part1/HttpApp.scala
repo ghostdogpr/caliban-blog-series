@@ -1,10 +1,12 @@
 package part1
 
 import caliban.Http4sAdapter
+import caliban.interop.tapir.HttpInterpreter
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.implicits._
 import org.http4s.server.Router
 import org.http4s.server.middleware.CORS
+import sttp.tapir.json.circe._
 import zio.interop.catz._
 import zio._
 
@@ -17,7 +19,7 @@ object HttpApp extends CatsApp {
           BlazeServerBuilder[Task]
             .bindHttp(8088, "localhost")
             .withHttpApp(
-              Router[Task]("/api/graphql" -> CORS.policy(Http4sAdapter.makeHttpService(interpreter))).orNotFound
+              Router[Task]("/api/graphql" -> CORS.policy(Http4sAdapter.makeHttpService(HttpInterpreter(interpreter)))).orNotFound
             )
             .resource
             .toScopedZIO

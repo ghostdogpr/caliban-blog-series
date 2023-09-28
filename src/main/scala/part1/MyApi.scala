@@ -3,8 +3,9 @@ package part1
 import scala.util.Try
 import java.net.URL
 import caliban.CalibanError.ExecutionError
-import caliban.GraphQL.graphQL
-import caliban.RootResolver
+import caliban._
+import caliban.schema.ArgBuilder.auto._
+import caliban.schema.Schema.auto._
 import caliban.schema.{ ArgBuilder, Schema }
 import part1.Data.{ Pug, PugNotFound }
 import zio.{ IO, UIO }

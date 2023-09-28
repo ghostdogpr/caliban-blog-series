@@ -1,1 +1,1 @@
-addSbtPlugin("com.github.ghostdogpr" % "caliban-codegen-sbt" % "1.2.1")
+addSbtPlugin("com.github.ghostdogpr" % "caliban-codegen-sbt" % "2.3.1")
